@@ -24,7 +24,7 @@ typedef struct {
     int twelve;
     int final;
     int total;
-    char Statues[100];
+    char Status[100];
 } Reg_Student;
 // Function to store student information in a binary file
 // Function to store student information in a binary file
@@ -266,23 +266,65 @@ int Get_PIN(int id ) {
 }
 void add_Student_To_Course(const char* courseName, Reg_Student student) {
     char fileName[MAX_NAME_LENGTH];
-    sprintf(fileName, "%s.bin", courseName);
+    sprintf(fileName, "CS Courses\\%s.bin", courseName);
 
-    FILE* file = fopen(fileName, "ab");
+    FILE* file = fopen(fileName, "rb+");
     if (file == NULL) {
         printf("Failed to open file: %s\n", fileName);
         return;
     }
 
+    // Move the file position to the end to append the student struct
+    fseek(file, 0, SEEK_END);
+
     fwrite(&student, sizeof(Reg_Student), 1, file);
 
     fclose(file);
+}
+char* Get_Status_of(const char* courseName, int studentID) {
+    char fileName[MAX_NAME_LENGTH];
+    sprintf(fileName, "CS Courses\\%s.bin", courseName);
+
+    FILE* file = fopen(fileName, "rb");
+    if (file == NULL) {
+        printf("Failed to open file: %s\n", fileName);
+        return NULL;
+    }
+
+    Reg_Student student;
+    while (fread(&student, sizeof(Reg_Student), 1, file) == 1) {
+        if (student.ID == studentID) {
+            fclose(file);
+            return strdup(student.Status);
+        }
+    }
+
+    fclose(file);
+    return NULL;
 }
 
 
 int main() {
 
-    // Student student1 = {221008802, "Abdelrahman Mohammed Hussain","College of Computing and Information Technology", 2, "Computer Science South Valley",15,3.4, 'A',253856};
+ 
+
+   //لازم تعرف اسم الماده ف استرينج بالشكل ده قبل ما تشغل الفانكشن
+    const char* courseName = "BA101-Calculus-1";
+    int studentID = 221008802;
+   //وتعرف الستاتيو بالشكل ده برضو قبل ما تعمل اي عملية
+    char* status = Get_Status_of(courseName, studentID);
+    if (status != NULL) {
+        printf("Student status: %s\n", status);
+    //ضروري تحرر الذاكرة بعد ما تخلص من الاسترينج
+        free(status);
+    } else {
+        printf("Student not found or file not accessible.\n");
+    }
+
+return 0;
+    
+}
+   // Student student1 = {221008802, "Abdelrahman Mohammed Hussain","College of Computing and Information Technology", 2, "Computer Science South Valley",15,3.4, 'A',253856};
     // Student student2 = {221008720,"Zeyad hamdy Abdo Hussien","College of Computing and Information Technology",2,"Computer Science South Valley",15,2.5,'C',549784};
     // Student student3 = {221018151,"Mohamed Elhussein Mohamed Gad","College of Computing and Information Technology",2,"Computer Science South Valley",15,2.7,'A',956483};
     // Student student4 = {221008756,"Kareem Mohamed Youssef Ahmed","College of Computing and Information Technology",2,"Computer Science South Valley",15,3.3,'A',214365};
@@ -294,63 +336,59 @@ int main() {
     // saveStudentInfo(student4);
     // saveStudentInfo(student5);
     
-    int id, PIN;
-    printf("Enter the ID of the student: \n");
-    scanf("%d", &id);
-    printf("Enter PIN: \n");
-    scanf("%d", &PIN);
-    int temp_PIN = Get_PIN(id);
-    if(temp_PIN == PIN){
-        printf("PIN is correct\n");
-        char* name = Get_Name(id);
-        if (name != NULL) {
-        printf("Name: %s\n", name);}
-        char* College = Get_College(id);
-        if (College != NULL) {
-        printf("College: %s\n", College);
-        }
-        int Period = Get_Period(id);
-        if (Period != -1) {
-        printf("Period: %d\n", Period);
-        }
-        char* Department = Get_Department(id);
-        if (Department != NULL) {
-        printf("Department: %s\n", Department);
-        }
-        float Credits = Get_Credits(id);
-        if (Credits != -1) {
-        printf("Credits: %.2f\n", Credits);
-        }
-        float gpa = Get_GPA(id);
-        if (gpa != -1) {
-        printf("GPA: %.2f\n", gpa);
-        }
-        char* FF = Get_FF(id);
-        if (FF != NULL) {
-        printf("FF: %s\n", FF);
-        }
-        int PIN = Get_PIN(id);
-        if (PIN != -1) {
-        printf("PIN: %d\n", PIN);}
+    // int id, PIN;
+    // printf("Enter the ID of the student: \n");
+    // scanf("%d", &id);
+    // printf("Enter PIN: \n");
+    // scanf("%d", &PIN);
+    // int temp_PIN = Get_PIN(id);
+    // if(temp_PIN == PIN){
+    //     printf("PIN is correct\n");
+    //     char* name = Get_Name(id);
+    //     if (name != NULL) {
+    //     printf("Name: %s\n", name);}
+    //     char* College = Get_College(id);
+    //     if (College != NULL) {
+    //     printf("College: %s\n", College);
+    //     }
+    //     int Period = Get_Period(id);
+    //     if (Period != -1) {
+    //     printf("Period: %d\n", Period);
+    //     }
+    //     char* Department = Get_Department(id);
+    //     if (Department != NULL) {
+    //     printf("Department: %s\n", Department);
+    //     }
+    //     float Credits = Get_Credits(id);
+    //     if (Credits != -1) {
+    //     printf("Credits: %.2f\n", Credits);
+    //     }
+    //     float gpa = Get_GPA(id);
+    //     if (gpa != -1) {
+    //     printf("GPA: %.2f\n", gpa);
+    //     }
+    //     char* FF = Get_FF(id);
+    //     if (FF != NULL) {
+    //     printf("FF: %s\n", FF);
+    //     }
+    //     int PIN = Get_PIN(id);
+    //     if (PIN != -1) {
+    //     printf("PIN: %d\n", PIN);}
 
-        }
+    //     }
         
-    // } else {
-    //     printf("Student with  %d not found.\n", id);
-    // }
+    // // } else {
+    // //     printf("Student with  %d not found.\n", id);
+    // // }
 
-    else{
-        printf("PIN is incorrect\n");
-    }
+    // else{
+    //     printf("PIN is incorrect\n");
+    // }
     // Reg_Student student1 = {221008802, "Abdelrahman Mohammed Hussain", 29,28, 36,93, "Passed" };
     // Reg_Student student2 = { 2, "Jane Smith", 75, 85, 95, 0, "Pass" };
 
     // add_Student_To_Course("BA101-Calculus-1", student1);
     // addStudentToCourse("CS111-Introduction-to-Computers", student2);
-return 0;
-    
-}
-
 // void saveStudentInfo(Student student) {
 //     FILE *file = fopen("student_data.bin", "ab");
 //     if (file == NULL) {
