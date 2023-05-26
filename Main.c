@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#define o printf
+#define s scanf
+#define MAX_INFO_SIZE 255
 #define MAX_NAME_LENGTH 50
 
 // Struct definition for student information
@@ -302,100 +304,250 @@ char* Get_Status_of(const char* courseName, int studentID) {
     fclose(file);
     return NULL;
 }
-
-
-int main() {
-
- 
-
-   //لازم تعرف اسم الماده ف استرينج بالشكل ده قبل ما تشغل الفانكشن
-    const char* courseName = "BA101-Calculus-1";
-    int studentID = 221008802;
-   //وتعرف الستاتيو بالشكل ده برضو قبل ما تعمل اي عملية
-    char* status = Get_Status_of(courseName, studentID);
-    if (status != NULL) {
-        printf("Student status: %s\n", status);
-    //ضروري تحرر الذاكرة بعد ما تخلص من الاسترينج
-        free(status);
-    } else {
-        printf("Student not found or file not accessible.\n");
+void Modify_GPA(int id, float newGPA) {
+    FILE* file = fopen("student_data.bin", "r+b");
+    if (file == NULL) {
+        printf("Error opening file.\n");
+        return;
     }
 
-return 0;
-    
+    Student student;
+    int found = 0;
+
+    while (fread(&student, sizeof(Student), 1, file) == 1) {
+        if (student.ID == id) {
+            student.GPA = newGPA;
+            fseek(file, -sizeof(Student), SEEK_CUR);
+            fwrite(&student, sizeof(Student), 1, file);
+            found = 1;
+            break;
+        }
+    }
+
+    if (!found) {
+        printf("Student with ID %d not found.\n", id);
+    }
+
+    fclose(file);
 }
-   // Student student1 = {221008802, "Abdelrahman Mohammed Hussain","College of Computing and Information Technology", 2, "Computer Science South Valley",15,3.4, 'A',253856};
-    // Student student2 = {221008720,"Zeyad hamdy Abdo Hussien","College of Computing and Information Technology",2,"Computer Science South Valley",15,2.5,'C',549784};
-    // Student student3 = {221018151,"Mohamed Elhussein Mohamed Gad","College of Computing and Information Technology",2,"Computer Science South Valley",15,2.7,'A',956483};
-    // Student student4 = {221008756,"Kareem Mohamed Youssef Ahmed","College of Computing and Information Technology",2,"Computer Science South Valley",15,3.3,'A',214365};
-    // Student student5 = {221008565,"Martin Maged Fouad Gerges","College of Computing and Information Technology",2,"Computer Science South Valley",15,3.2,'A',759427};
+void Modify_Credits(int id, float newCredits) {
+    FILE* file = fopen("student_data.bin", "r+b");
+    if (file == NULL) {
+        printf("Error opening file.\n");
+        return;
+    }
 
-    // saveStudentInfo(student1);
-    // saveStudentInfo(student2);
-    // saveStudentInfo(student3);
-    // saveStudentInfo(student4);
-    // saveStudentInfo(student5);
-    
-    // int id, PIN;
-    // printf("Enter the ID of the student: \n");
-    // scanf("%d", &id);
-    // printf("Enter PIN: \n");
-    // scanf("%d", &PIN);
-    // int temp_PIN = Get_PIN(id);
-    // if(temp_PIN == PIN){
-    //     printf("PIN is correct\n");
-    //     char* name = Get_Name(id);
-    //     if (name != NULL) {
-    //     printf("Name: %s\n", name);}
-    //     char* College = Get_College(id);
-    //     if (College != NULL) {
-    //     printf("College: %s\n", College);
-    //     }
-    //     int Period = Get_Period(id);
-    //     if (Period != -1) {
-    //     printf("Period: %d\n", Period);
-    //     }
-    //     char* Department = Get_Department(id);
-    //     if (Department != NULL) {
-    //     printf("Department: %s\n", Department);
-    //     }
-    //     float Credits = Get_Credits(id);
-    //     if (Credits != -1) {
-    //     printf("Credits: %.2f\n", Credits);
-    //     }
-    //     float gpa = Get_GPA(id);
-    //     if (gpa != -1) {
-    //     printf("GPA: %.2f\n", gpa);
-    //     }
-    //     char* FF = Get_FF(id);
-    //     if (FF != NULL) {
-    //     printf("FF: %s\n", FF);
-    //     }
-    //     int PIN = Get_PIN(id);
-    //     if (PIN != -1) {
-    //     printf("PIN: %d\n", PIN);}
+    Student student;
+    int found = 0;
 
-    //     }
-        
-    // // } else {
-    // //     printf("Student with  %d not found.\n", id);
-    // // }
+    while (fread(&student, sizeof(Student), 1, file) == 1) {
+        if (student.ID == id) {
+            student.Credits = newCredits;
+            fseek(file, -sizeof(Student), SEEK_CUR);
+            fwrite(&student, sizeof(Student), 1, file);
+            found = 1;
+            break;
+        }
+    }
 
-    // else{
-    //     printf("PIN is incorrect\n");
-    // }
-    // Reg_Student student1 = {221008802, "Abdelrahman Mohammed Hussain", 29,28, 36,93, "Passed" };
-    // Reg_Student student2 = { 2, "Jane Smith", 75, 85, 95, 0, "Pass" };
+    if (!found) {
+        printf("Student with ID %d not found.\n", id);
+    }
 
-    // add_Student_To_Course("BA101-Calculus-1", student1);
-    // addStudentToCourse("CS111-Introduction-to-Computers", student2);
-// void saveStudentInfo(Student student) {
-//     FILE *file = fopen("student_data.bin", "ab");
-//     if (file == NULL) {
-//         printf("Error opening file.\n");
+    fclose(file);
+}
+
+// void createTranscript(int studentID) {
+//     char transcriptFileName[MAX_NAME_LENGTH];
+//     sprintf(transcriptFileName, "transcript_%d.txt", studentID);
+
+//     FILE* transcriptFile = fopen(transcriptFileName, "w");
+//     if (transcriptFile == NULL) {
+//         printf("Failed to create transcript file for student ID: %d\n", studentID);
 //         return;
 //     }
 
-//     fwrite(&student, sizeof(Student), 1, file);
-//     fclose(file);
+//     char courseNames[56][MAX_NAME_LENGTH] = {
+//         // semester 1
+//         // semester 1
+//         "BA003-Math-0",
+//         "BA101-Calculus-1",
+//         "BA113-Physics",
+//         "CS111-Introduction-to-Computers",
+//         "IS171-Introduction-to-Information-systems",
+//         "LH135-English-for-Specific-Purposes-I(ESP-I)",
+//         "NC172-Fundamentals-of-Business",
+//         // semester 2
+//         "BA102-Calculus-2",
+//         "CS143-Introduction-to-Problem-Solving-and-Programming",
+//         "EC134-Fundamentals-of-Electronics",
+//         "LH136-English-for-Specific-Purposes-II(ESP-II)",
+//         "NC133-Communication-Skills",
+//         // semester 3
+//         "BA201-Calculus-III",
+//         "BA203-Probability-and-Statistics",
+//         "BA216-Advanced-Physics",
+//         "CE216-Digital-Logic-Design",
+//         "CS202-Discrete-Structures",
+//         "CS243-Object-Oriented-Programming",
+//         // semester 4
+//         "Introduction-to-Networks",
+//         "CE243-Intro.-to-Computer-Architecture",
+//         "CS212-Data-Structures-and-Algorithms",
+//         "CS24-Advanced-Programming-Applications",
+//         "IS273-Database-Systems",
+//         "IT291-Professional-Training-in-Entrepreneurship",
+//         "SE291-Introduction-to-Software-Engineering",
+//         // semester 5
+//         "BA301-Advanced-Statistics",
+//         "BA304-Linear-Algebra",
+//         "CS311-Theory-of-Computation",
+//         "CS321-Systems-Programming",
+//         "CS333-Web-Programming",
+//         "CS352-Computer-Graphics",
+//         "IT321-Professional-Training-in-Programming-I(.Net-1)",
+//         // semester 6
+//         "CS301-Numerical-Methods",
+//         "CS305-System-Modeling-and-Simulation",
+//         "CS312-Computing-Algorithms",
+//         "CS322-Operating-Systems",
+//         "CS366Introduction-to-Artificial-Intelligence",
+//         // minor semester 6
+//         "IS467-Big-Data-Analytics",
+//         "IT371-Professional-Training-in-Databases-1",
+//         // semester 7
+//         "CS401-Project-1",
+//         "CS445-Structure-of-Programming-Languages",
+//         "CS481-Computers-&-Society",
+//         // minor semester 7
+//         "CS428-Cloud-Computing",
+//         "CS441-Compilers",
+//         "SE496-Software-Engineering-Process",
+//         "IT411-Professional-Training-in-Software-Testing-2",
+//         // semester 8
+//         "CS402-Project-2",
+//         "CS421-Computer-System-Security",
+//         "CS451-Human-Computer-Interaction",
+//         // minor semester 8
+//         "CS432-Network-Protocols-&-Programming",
+//         "CS460_Deep-Learning",
+//         "SE496-Software-Engineering-Process",
+//         "IT412-Professional-Training-in-Software-Testing-3"
+//         // ... Add more course names for other semesters
+//     };
+
+//     int i;
+//     for (i = 0; i < 56; i++) {
+//     char fileName[MAX_NAME_LENGTH];
+//     sprintf(fileName, "CS Courses\\%s.bin", courseNames[i]);
+
+//     FILE* file = fopen(fileName, "rb+");
+//         if (fileName == NULL) {
+//             printf("Failed to open file for course: %s\n", courseNames[i]);
+//             continue;
+//         }
+
+//         Reg_Student student;
+//         while (fread(&student, sizeof(Reg_Student), 1, fileName) == 1) {
+//             if (student.ID == studentID) {
+//                 fprintf(transcriptFile, "Course: %s\n", courseNames[i]);
+//                 // fprintf(transcriptFile, "Name: %s\n", student.name);
+//                 fprintf(transcriptFile, "ID: %d\n", student.ID);
+//                 fprintf(transcriptFile, "Grade: %d\n", student.final);
+//                 fprintf(transcriptFile, "\n");
+//             }
+//         }
+
+//         fclose(fileName);
+//     }
+
+//     fclose(transcriptFile);
+//     printf("Transcript created successfully for student ID: %d\n", studentID);
 // }
+
+int main() {
+    int PASS, studentID, k = 0, choice, c, x;
+    int Current_semester = 0;
+
+// assigning current semester variable.
+    int period = Get_Period(studentID);
+    if (period != NULL) {
+        int semester = period;
+        Current_semester = semester + 1;
+    } 
+    printf("\t\tWelcome to AAST Registration Program\n");
+    printf("1-Student\t\t2-Admin\n");
+    scanf("%d",&c);
+    if(c==1){
+        printf("1-Old Student\t\t2-New student\n");
+        s("%d",&x);
+    }
+    switch (x)
+    {
+        case 1:
+        o("Enter your Regisration Number: \n");
+        l:s("%d", &studentID);
+        o("Enter your pin: \n");
+        m:s("%d", &PASS);
+        system("cls");
+        FILE *fptr;
+        fptr = fopen("Students.txt", "r");
+        if (Get_PIN(studentID) == NULL)
+        {
+            o("Registration Number and Pin Code dose not matched.\nPlease type them correctly.\nPlease try to enter pin again");
+            goto m;
+        }
+        printf("Registration Number: %d", studentID);
+        printf("\nName: %s", Get_Name(studentID));
+        printf("\nCollege: %s", Get_College(studentID));
+        printf("\nPeriod: %d", Get_Period(studentID));
+        printf("\nDepartment: %s", Get_Department(studentID));
+        printf("\nTotal Achivement: %f", Get_Credits(studentID));
+        printf("\nGPA: %f", Get_GPA(studentID));
+
+        printf("\n\n");
+        printf("1-Register\t\t2-GPA Calculator\t\t3-View Registered Courses\t\t4-View/Print Transcript\n");
+        n:s("%d", &choice);}
+
+int sem = Get_Period(studentID) + 1;
+switch (choice) {
+    case 1:
+        if (sem == 3) {
+            printf("Current Semester: %d\n", sem);
+            char* status = Get_Status_of("BA101-Calculus-1", studentID);
+            printf("\n%s\n", status);
+            if (strcmp(status, "Passed") == 0) {
+                printf("1-BA201-Calculus-III\n2-BA203-Probability-and-Statistics\n");
+                free(status);
+            }
+            
+            status = Get_Status_of("BA113-Physics", studentID);
+            printf("\n%s\n", status);
+            if (strcmp(status, "Passed") == 0) {
+                printf("3-BA216-Advanced-Physics\n");
+                free(status);
+            }
+            
+            status = Get_Status_of("CS111-Introduction-to-Computers", studentID);
+            printf("\n%s\n", status);
+            if (strcmp(status, "Passed") == 0) {
+                printf("4-CE216-Digital Logic Design\n5-CS202-Discrete Structures\n");
+                free(status);
+            }
+            
+            status = Get_Status_of("CS143-Introduction-to-Problem-Solving-and-Programming", studentID);
+            printf("\n%s\n", status);
+            if (strcmp(status, "Passed") == 0) {
+                printf("6-CS243-Object Oriented Programming\n");
+                free(status);
+            }
+        }
+        break;
+    // Add cases for other choices as needed
+    case 2:
+}
+
+return 0;
+    
+    }
+   
